@@ -1,26 +1,6 @@
 import styled from 'styled-components';
 import Head from 'next/head';
-
-const size = {
-  mobileS: '320px',
-  mobileM: '375px',
-  mobileL: '425px',
-  tablet: '768px',
-  laptop: '1024px',
-  laptopL: '1440px',
-  desktop: '2560px',
-};
-
-export const device = {
-  mobileS: `(min-width: ${size.mobileS})`,
-  mobileM: `(min-width: ${size.mobileM})`,
-  mobileL: `(min-width: ${size.mobileL})`,
-  tablet: `(min-width: ${size.tablet})`,
-  laptop: `(min-width: ${size.laptop})`,
-  laptopL: `(min-width: ${size.laptopL})`,
-  desktop: `(min-width: ${size.desktop})`,
-  desktopL: `(min-width: ${size.desktop})`,
-};
+import Device from '../lib/sizes/device';
 
 const Layout = styled.div`
   width: 100%;
@@ -47,7 +27,7 @@ const Hero = styled.div`
   flex-flow: column;
   margin: 4rem auto 2rem;
 
-  @media ${device.tablet} {
+  @media ${Device.tablet} {
     flex-flow: row;
     margin: 0 auto;
   }
@@ -72,7 +52,7 @@ const HeroTitle = styled.h1`
   font-weight: bold;
   margin: 0;
 
-  @media ${device.tablet} {
+  @media ${Device.tablet} {
     font-size: 5rem;
   }
 `;
