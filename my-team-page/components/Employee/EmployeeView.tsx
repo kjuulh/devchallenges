@@ -32,7 +32,7 @@ const EmployeeView: FC<Props> = (props) => {
       </TopBar>
       <Content>
         {props.employees.map((e, index) => (
-          <EmployeeCard employee={e} index={index}></EmployeeCard>
+          <EmployeeCard key={index} employee={e} index={index}></EmployeeCard>
         ))}
       </Content>
       <Footer>{props.author}</Footer>

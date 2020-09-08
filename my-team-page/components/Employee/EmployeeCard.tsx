@@ -18,7 +18,7 @@ const Container = styled.div`
     margin-top: 80px;
   }
 
-  @media ${Device.tablet} {
+  @media ${Device.laptop} {
     :nth-child(even) {
       margin-top: 0;
     }
