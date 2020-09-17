@@ -1,0 +1,113 @@
+@mixin hover_effect($color)
+  &:hover, &:focus
+    background: $color
+  &:active
+    background: lighten($color, 10)
+
+@mixin raised_hover_effect($color)
+  @include hover_effect(darken($color, 10))
+
+@mixin outline_hover_effect($color)
+  @include hover_effect(lighten($color, 40))
+
+.btn
+  outline: none
+  font-weight: bold
+  transition: all 200ms ease
+
+  p
+    display: inline
+    margin: auto 4px
+
+  &.btn__variant
+    &-raised
+      box-shadow: 2px 2px 8px rgba(0,0,0,0.25)
+      border: none
+      &.btn__color
+        &-default
+          color: black
+          background: #e0e0e0
+          @include raised_hover_effect(#e0e0e0e8)
+        &-primary
+          color: white
+          background: #3c3cdb
+          @include raised_hover_effect(#3c3cdb)
+        &-secondary
+          color: white
+          background: #5e5e5e
+          @include raised_hover_effect(#5e5e5e)
+        &-danger
+          color: white
+          background: #db1c1c
+          @include raised_hover_effect(#db1c1c)
+    &-outline
+      background: none
+      border-style: solid
+      border-width: 2px
+      &.btn__color
+        &-default
+          color: #6d6d6d
+          border-color: #e0e0e0
+          @include outline_hover_effect(#797979)
+        &-primary
+          color: #3c3cdb
+          border-color: #3c3cdb
+          @include outline_hover_effect(#3c3cdb)
+        &-secondary
+          color: #5e5e5e
+          border-color: #5e5e5e
+          @include outline_hover_effect(#5e5e5e)
+        &-danger
+          color: #db1c1c
+          border-color: #db1c1c
+          @include outline_hover_effect(#db1c1c)
+
+    &-text
+      background: rgba(#000,0)
+      border: none
+      &.btn__color
+        &-default
+          color: #6d6d6d
+          @include outline_hover_effect(#797979)
+        &-primary
+          color: #3c3cdb
+          @include outline_hover_effect(#3c3cdb)
+        &-secondary
+          color: #5e5e5e
+          @include outline_hover_effect(#5e5e5e)
+        &-danger
+          color: #db1c1c
+          @include outline_hover_effect(#db1c1c)
+
+  &.btn--disable-shadow
+    box-shadow: none
+
+  &.btn--disabled
+    &.btn__variant
+      &-raised
+        color: rgba(#000, 0.4) !important
+        background: rgba(#000, 0.1) !important
+      &-outline
+        color: rgba(#000, 0.4) !important
+        background: rgba(#000, 0.1) !important
+        border-color: rgba(#000, 0.4) !important
+      &-text
+        color: rgba(#000, 0.4) !important
+        background: none !important
+
+  &.btn__size
+    &-sm
+      padding: 12px
+      border-radius: 7px
+      &.btn__variant-outline
+        padding: 10px
+    &-md
+      padding: 16px
+      border-radius: 8px
+      &.btn__variant-outline
+        padding: 14px
+    &-lg
+      padding: 18px
+      border-radius: 9px
+      &.btn__variant-outline
+        padding: 16px
