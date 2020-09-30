@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Application.Resources.Images.Queries
 {
-    public class GetImagesWithPaginationQuery : IRequest<PaginatedList<ImageDto>>, IRequest<Unit>
+    public class GetImagesWithPaginationQuery : IRequest<PaginatedList<ImageDto>>
     {
         public int PageNumber { get; set; } = 1;
         public int PageSize { get; set; } = 10;
