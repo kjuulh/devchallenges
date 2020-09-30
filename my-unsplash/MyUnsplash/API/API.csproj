@@ -5,7 +5,26 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="5.5.1"/>
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0-preview2"/>
+        <PackageReference Include="Microsoft.Extensions.Diagnostics.HealthChecks.EntityFrameworkCore" Version="5.0.0-rc.1.20451.17"/>
+        <PackageReference Include="NSwag.AspNetCore" Version="13.8.2"/>
+        <PackageReference Include="NSwag.MSBuild" Version="13.8.2">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
     </ItemGroup>
 
+    <ItemGroup>
+        <ProjectReference Include="..\Application\Application.csproj"/>
+        <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
+    </ItemGroup>
+
+<!--    <Target Name="GenerateSwaggerDoc" AfterTargets="Build" Condition=" '$(RuntimeIdentifier)' != 'linux-arm64' ">-->
+<!--        <Copy SourceFiles="@(Reference)" DestinationFolder="$(OutDir)References"/>-->
+<!--        <Exec Command="$(NSwagExe_Net5) run nswag.json /variables:Configuration=$(Configuration)"/>-->
+<!--    </Target>-->
 </Project>
