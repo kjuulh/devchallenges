@@ -33,6 +33,10 @@ namespace API
                     options.Filters.Add(new ApiExceptionFilterAttribute()))
                 .AddFluentValidation().Services
                 .Configure<ApiBehaviorOptions>(options => options.SuppressModelStateInvalidFilter = true)
+                .AddCors(options =>
+                {
+                    options.AddDefaultPolicy(policy => policy.WithOrigins("http://localhost:3000").AllowAnyMethod().AllowAnyHeader().AllowCredentials());
+                })
                 .AddOpenApiDocument(configure => { configure.Title = "My Unsplash API"; });
         }
 
@@ -59,6 +63,7 @@ namespace API
 
             app.UseRouting();
 
+            app.UseCors();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });

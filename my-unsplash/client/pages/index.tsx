@@ -1,7 +1,11 @@
 import styled from "styled-components";
-import React, { useState } from "react";
-import { Images } from "../components/Images";
+import React, { useEffect, useState } from "react";
+import { Image, Images } from "../components/Images";
 import { Dialog } from "../components/Dialog";
+import { NextPage } from "next";
+import * as https from "https";
+import InfiniteScroll from "react-infinite-scroller";
+import Axios from "axios";
 
 const Page = styled.div`
   width: 100%;
@@ -107,9 +111,42 @@ const ImageContent = styled.main`
   margin: 2rem 0;
 `;
 
-const Home = () => {
+export interface HomeProps extends ImagesApiResponse{
+
+}
+
+const Home: NextPage<HomeProps> = (props) => {
   const [search, setSearch] = useState("");
-  const [showDialog, setShowDialog] = useState(true);
+  const [showDialog, setShowDialog] = useState(false);
+  const [images, setImages] = useState<Image[]>(props.items);
+  const [hasMoreItems, setHasMoreItems] = useState(props.hasNextPage);
+  const [nextUrl, setNextUrl] = useState<string | null>(null);
+
+  const loadMoreImages = (page: number) => {
+    const baseUrl = "https://localhost:5001/api/image?pageSize=10";
+    let url = baseUrl;
+    if (nextUrl) {
+      url = nextUrl;
+    }
+
+    Axios.get<ImagesApiResponse>(url).then(response => {
+      let localImages = images;
+      const imageApiResp = response.data;
+      if (imageApiResp) {
+        imageApiResp.items.map(image => {
+          localImages.push(image);
+        })
+
+        if (imageApiResp.hasNextPage) {
+          setImages(localImages);
+          setNextUrl(baseUrl + `&pageNumber=${imageApiResp.pageIndex + 1}`)
+        } else {
+          setImages(localImages)
+          setHasMoreItems(false)
+        }
+      }
+    })
+  };
 
   return (
     <Page>
@@ -135,96 +172,37 @@ const Home = () => {
             Add a photo
           </AddPhotoButton>
         </Header>
-        <ImageContent>
-          <Images
-            width={3}
-            search={search}
-            images={[
-              {
-                url:
-                  "https://images.unsplash.com/photo-1601114721973-90856b4654da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=600&q=60",
-                description: "some",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1601109471554-7429b4103cba?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=550&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1601114721973-90856b4654da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-                description: "some-description",
-              },
-
-              {
-                url:
-                  "https://images.unsplash.com/photo-1599687266725-0d4d52716b86?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1950&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1593642532400-2682810df593?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1601114721973-90856b4654da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1593642634315-48f5414c3ad9?ixlib=rb-1.2.1&auto=format&fit=crop&w=1950&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-
-              {
-                url:
-                  "https://images.unsplash.com/photo-1601114721973-90856b4654da?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
-                description: "some-description",
-              },
-
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-              {
-                url:
-                  "https://images.unsplash.com/photo-1584964139384-8baf818ba6c8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1867&q=80",
-                description: "some-description",
-              },
-            ]}
-          />
-        </ImageContent>
+        <InfiniteScroll pageStart={0} loadMore={loadMoreImages} hasMore={hasMoreItems} threshold={1500}>
+          <ImageContent>
+            <Images width={3} search={search} images={images} />
+          </ImageContent>
+        </InfiniteScroll>
       </Container>
     </Page>
   );
+};
+
+interface ImagesApiResponse {
+  items: Image[];
+  totalCount: number;
+  totalPages: number;
+  pageIndex: number;
+  pageSize: number;
+  hasPreviousPage: boolean;
+  hasNextPage: boolean
+}
+
+export const getServerSideProps = async () => {
+  const agent = new https.Agent({
+    rejectUnauthorized: false,
+  });
+  // @ts-ignore
+  const res = await fetch("https://localhost:5001/api/image?pageSize=10", {
+    agent,
+  });
+  const data = (await res.json()) as ImagesApiResponse;
+
+  return { props: data };
 };
 
 export default Home;

@@ -5,7 +5,7 @@ import ImageContainer from "./ImageContainer";
 import { Dialog } from "./Dialog";
 import styled from "styled-components";
 
-interface Image {
+export interface Image {
   url: string;
   description: string;
 }
@@ -101,7 +101,7 @@ export const Pane = (props: { image: Image; onClick: () => void }) => (
       <PaneBackground />
       <PaneContent>
         <DeleteButton onClick={props.onClick}>Delete</DeleteButton>
-        <p>some description</p>
+        <p>{props.image.description}</p>
       </PaneContent>
     </PaneHover>
   </PaneContainer>
