@@ -2,10 +2,10 @@ import React, { FC, useEffect, useState } from "react";
 import ImageColumn from "./ImageColumn";
 import PaneImage from "./PaneImage";
 import ImageContainer from "./ImageContainer";
-import { Dialog } from "./Dialog";
 import styled from "styled-components";
 import { DeletePhotoDialog } from "./AddPhotoDialog";
 import Axios from "axios";
+import {filter} from "domutils";
 
 export interface Image {
   id: string;
@@ -113,6 +113,7 @@ export const Pane = (props: { image: Image; onClick: () => void }) => (
 export const Images: FC<ImagesProps> = ({ width, images, search }) => {
   const [filteredImages, setFilteredImages] = useState<Image[]>(images);
   const [showDialog, setShowDialog] = useState(false);
+  const [selectedImage, selectImage] = useState<Image>();
 
   useEffect(() => {
     if (search) {
@@ -123,6 +124,10 @@ export const Images: FC<ImagesProps> = ({ width, images, search }) => {
       setFilteredImages(images);
     }
   }, [search]);
+
+  useEffect(() => {
+    setFilteredImages(images);
+  }, [images])
 
   const columns: Image[][] = [];
   if (filteredImages) {
@@ -143,12 +148,17 @@ export const Images: FC<ImagesProps> = ({ width, images, search }) => {
         toggleDialog={() => setShowDialog(!showDialog)}
         onSubmit={(v) => {
           console.log(v);
-          if (v.password === 'Blizzar1') {
-            console.log('accepted password')
-              setShowDialog(false)
-              Axios.delete('')
+          if (v.password === "Blizzar1") {
+            console.log("accepted password");
+            Axios.delete(
+              "https://localhost:5001/api/image/" + selectedImage?.id
+            ).then(() => {
+              setFilteredImages(
+                filteredImages.filter((i) => i.id !== selectedImage?.id)
+              );
+              setShowDialog(false);
+            });
           }
-
         }}
         onCancel={() => setShowDialog(false)}
       />
@@ -158,7 +168,10 @@ export const Images: FC<ImagesProps> = ({ width, images, search }) => {
             <Pane
               key={index}
               image={image}
-              onClick={() => setShowDialog(true)}
+              onClick={() => {
+                selectImage(image);
+                setShowDialog(true);
+              }}
             />
           ))}
         </ImageColumn>

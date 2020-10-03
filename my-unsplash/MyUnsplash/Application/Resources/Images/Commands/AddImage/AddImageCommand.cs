@@ -29,7 +29,7 @@ namespace Application.Resources.Images.Commands.AddImage
             {
                 Id = Guid.NewGuid().ToString(),
                 Url = request.Url,
-                Description = request.Url 
+                Description = request.Description 
             };
 
             entity.DomainEvents.Add(new ImageAddedEvent(entity));

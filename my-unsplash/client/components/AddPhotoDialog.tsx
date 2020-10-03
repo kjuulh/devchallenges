@@ -1,12 +1,4 @@
-import React, {
-  ButtonHTMLAttributes,
-  createRef,
-  FC,
-  Ref,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import React, { createRef, FC, ReactNode, useRef, useState } from "react";
 import { Dialog } from "./Dialog";
 import styled, { css } from "styled-components";
 
@@ -87,7 +79,9 @@ const RaisedButton = styled(Button)<ButtonInterface>`
 interface CustomButtonProps {
   type?: "link" | "raised";
   color?: "success" | "danger";
-  children: any;
+  children: ReactNode;
+  onClick: () => void;
+  disabled?: boolean;
 }
 const CustomButton = React.forwardRef<HTMLButtonElement, CustomButtonProps>(
   (props, ref) => {
@@ -143,6 +137,7 @@ export const AddPhotoDialog: FC<AddPhotoDialogProps> = (props) => {
   const [label, setLabel] = useState("");
   const [photoURL, setPhotoURL] = useState("");
 
+  const buttonRef = createRef<HTMLButtonElement>();
   return (
     <Dialog show={props.showDialog} onClick={props.toggleDialog}>
       <DialogTitle>Add a new photo</DialogTitle>
@@ -157,10 +152,15 @@ export const AddPhotoDialog: FC<AddPhotoDialogProps> = (props) => {
         onValueChange={(v) => setPhotoURL(v)}
       />
       <FormActions>
-        <CustomButton type="link" onClick={() => props.onCancel()}>
+        <CustomButton
+          ref={buttonRef}
+          type="link"
+          onClick={() => props.onCancel()}
+        >
           Cancel
         </CustomButton>
         <CustomButton
+          ref={buttonRef}
           color="success"
           disabled={label.length === 0 || photoURL.length === 0}
           onClick={() =>
@@ -186,6 +186,8 @@ interface DeletePhotoDialogProps {
 export const DeletePhotoDialog: FC<DeletePhotoDialogProps> = (props) => {
   const [password, setPassword] = useState("");
 
+  const buttonRef = useRef<HTMLButtonElement>(null);
+
   return (
     <Dialog show={props.showDialog} onClick={props.toggleDialog}>
       <DialogTitle>Are you sure?</DialogTitle>
@@ -195,10 +197,15 @@ export const DeletePhotoDialog: FC<DeletePhotoDialogProps> = (props) => {
         onValueChange={(v) => setPassword(v)}
       />
       <FormActions>
-        <CustomButton type="link" onClick={() => props.onCancel()}>
+        <CustomButton
+          ref={buttonRef}
+          type="link"
+          onClick={() => props.onCancel()}
+        >
           Cancel
         </CustomButton>
         <CustomButton
+          ref={buttonRef}
           color="danger"
           onClick={() => props.onSubmit({ password })}
         >

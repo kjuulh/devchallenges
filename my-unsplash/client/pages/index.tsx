@@ -121,7 +121,7 @@ const Home: NextPage<HomeProps> = (props) => {
   const [hasMoreItems, setHasMoreItems] = useState(props.hasNextPage);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
 
-  const loadMoreImages = (page: number) => {
+  const loadMoreImages = () => {
     const baseUrl = "https://localhost:5001/api/image?pageSize=10";
     let url = baseUrl;
     if (nextUrl) {
@@ -158,9 +158,9 @@ const Home: NextPage<HomeProps> = (props) => {
         toggleDialog={() => setShowDialog(!showDialog)}
         onCancel={() => setShowDialog(false)}
         onSubmit={(v) => {
-          Axios.post<{description: string; photoURL: string}>("https://localhost:5001/api/image", v).then(() => {
+          Axios.post<{description: string; url: string}, string>("https://localhost:5001/api/image", v).then((response) => {
             setShowDialog(false)
-            loadMoreImages(0);
+            setImages([{...v, id: response}, ...images]);
           });
         }}
       />
@@ -215,7 +215,7 @@ export const getServerSideProps = async () => {
   try {
     const res = await fetch("https://localhost:5001/api/image?pageSize=10", {
       agent,
-    });
+    } as any);
     const data = (await res.json()) as ImagesApiResponse;
     return { props: data };
   } catch (e) {

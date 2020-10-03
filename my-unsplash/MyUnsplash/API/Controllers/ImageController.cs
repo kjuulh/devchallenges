@@ -18,7 +18,7 @@ namespace API.Controllers
         [HttpPost]
         public async Task<ActionResult<string>> Add(AddImageCommand command) => await Mediator.Send(command);
 
-        [HttpDelete("{photoId}")]
+        [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] DeleteImageCommand command)
         {
             await Mediator.Send(command);
