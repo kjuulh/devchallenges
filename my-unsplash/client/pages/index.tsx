@@ -1,14 +1,18 @@
 import styled from "styled-components";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Image, Images } from "../components/Images";
-import { Dialog } from "../components/Dialog";
 import { NextPage } from "next";
 import * as https from "https";
 import InfiniteScroll from "react-infinite-scroller";
 import Axios from "axios";
+import { AddPhotoDialog } from "../components/AddPhotoDialog";
 
 const Page = styled.div`
   width: 100%;
+
+  * {
+    font-family: "Inconsolata", monospace;
+  }
 `;
 const Container = styled.div`
   width: 100%;
@@ -34,15 +38,12 @@ const Title = styled.div`
   align-content: center;
   height: 100%;
 `;
-const Logo = styled.div`
+const Logo = styled.img`
   grid-area: logo;
   margin: 0;
   padding: 0;
   width: 40px;
   height: 40px;
-  background-size: cover;
-  background: url("https://images.unsplash.com/photo-1593642532842-98d0fd5ebc1a?ixlib=rb-1.2.1&auto=format&fit=crop&w=1050&q=80")
-    center;
 `;
 const TitleText = styled.h4`
   grid-area: title;
@@ -76,7 +77,7 @@ const SearchIcon = styled.img`
 `;
 const SearchText = styled.input`
   color: #777;
-  font-weight: 500;
+  font-family: "Inconsolata", monospace;
   background: none;
   border: none;
   outline: none;
@@ -111,13 +112,11 @@ const ImageContent = styled.main`
   margin: 2rem 0;
 `;
 
-export interface HomeProps extends ImagesApiResponse{
-
-}
+export interface HomeProps extends ImagesApiResponse {}
 
 const Home: NextPage<HomeProps> = (props) => {
-  const [search, setSearch] = useState("");
   const [showDialog, setShowDialog] = useState(false);
+  const [search, setSearch] = useState("");
   const [images, setImages] = useState<Image[]>(props.items);
   const [hasMoreItems, setHasMoreItems] = useState(props.hasNextPage);
   const [nextUrl, setNextUrl] = useState<string | null>(null);
@@ -129,34 +128,46 @@ const Home: NextPage<HomeProps> = (props) => {
       url = nextUrl;
     }
 
-    Axios.get<ImagesApiResponse>(url).then(response => {
-      let localImages = images;
-      const imageApiResp = response.data;
-      if (imageApiResp) {
-        imageApiResp.items.map(image => {
-          localImages.push(image);
-        })
+    Axios.get<ImagesApiResponse>(url)
+      .then((response) => {
+        let localImages = images;
+        const imageApiResp = response.data;
+        if (imageApiResp) {
+          imageApiResp.items.map((image) => {
+            localImages.push(image);
+          });
 
-        if (imageApiResp.hasNextPage) {
-          setImages(localImages);
-          setNextUrl(baseUrl + `&pageNumber=${imageApiResp.pageIndex + 1}`)
-        } else {
-          setImages(localImages)
-          setHasMoreItems(false)
+          if (imageApiResp.hasNextPage) {
+            setImages(localImages);
+            setNextUrl(baseUrl + `&pageNumber=${imageApiResp.pageIndex + 1}`);
+          } else {
+            setImages(localImages);
+            setHasMoreItems(false);
+          }
         }
-      }
-    })
+      })
+      .catch(() => {
+        return;
+      });
   };
 
   return (
     <Page>
-      <Dialog show={showDialog} onClick={() => setShowDialog(!showDialog)}>
-        <div>some stupid text</div>
-      </Dialog>
+      <AddPhotoDialog
+        showDialog={showDialog}
+        toggleDialog={() => setShowDialog(!showDialog)}
+        onCancel={() => setShowDialog(false)}
+        onSubmit={(v) => {
+          Axios.post<{description: string; photoURL: string}>("https://localhost:5001/api/image", v).then(() => {
+            setShowDialog(false)
+            loadMoreImages(0);
+          });
+        }}
+      />
       <Container>
         <Header>
           <Title>
-            <Logo />
+            <Logo src="/unsplash-logo.svg" />
             <TitleText>My Unsplash</TitleText>
             <TitleUrl>devchallenges.io</TitleUrl>
           </Title>
@@ -172,7 +183,12 @@ const Home: NextPage<HomeProps> = (props) => {
             Add a photo
           </AddPhotoButton>
         </Header>
-        <InfiniteScroll pageStart={0} loadMore={loadMoreImages} hasMore={hasMoreItems} threshold={1500}>
+        <InfiniteScroll
+          pageStart={0}
+          loadMore={loadMoreImages}
+          hasMore={hasMoreItems}
+          threshold={1500}
+        >
           <ImageContent>
             <Images width={3} search={search} images={images} />
           </ImageContent>
@@ -189,20 +205,22 @@ interface ImagesApiResponse {
   pageIndex: number;
   pageSize: number;
   hasPreviousPage: boolean;
-  hasNextPage: boolean
+  hasNextPage: boolean;
 }
 
 export const getServerSideProps = async () => {
   const agent = new https.Agent({
     rejectUnauthorized: false,
   });
-  // @ts-ignore
-  const res = await fetch("https://localhost:5001/api/image?pageSize=10", {
-    agent,
-  });
-  const data = (await res.json()) as ImagesApiResponse;
-
-  return { props: data };
+  try {
+    const res = await fetch("https://localhost:5001/api/image?pageSize=10", {
+      agent,
+    });
+    const data = (await res.json()) as ImagesApiResponse;
+    return { props: data };
+  } catch (e) {
+    return { props: {} };
+  }
 };
 
 export default Home;

@@ -31,7 +31,7 @@ const CardDialog = styled.div`
 
   background: white;
   color: black;
-  padding: 1rem;
+  padding: 1.5rem;
   border-radius: 20px;
   max-width: 400px;
   width: 100%;

@@ -4,8 +4,11 @@ import PaneImage from "./PaneImage";
 import ImageContainer from "./ImageContainer";
 import { Dialog } from "./Dialog";
 import styled from "styled-components";
+import { DeletePhotoDialog } from "./AddPhotoDialog";
+import Axios from "axios";
 
 export interface Image {
+  id: string;
   url: string;
   description: string;
 }
@@ -68,7 +71,7 @@ const PaneContent = styled.div`
     font-weight: bolder;
     letter-spacing: 0.05rem;
     color: white;
-  user-select: none;
+    user-select: none;
   }
 `;
 
@@ -122,24 +125,41 @@ export const Images: FC<ImagesProps> = ({ width, images, search }) => {
   }, [search]);
 
   const columns: Image[][] = [];
-  filteredImages.forEach((img, i) => {
-    const column = i % width;
-    if (i < width) {
-      columns[column] = [];
-    }
+  if (filteredImages) {
+    filteredImages.forEach((img, i) => {
+      const column = i % width;
+      if (i < width) {
+        columns[column] = [];
+      }
 
-    columns[column].push(img);
-  });
+      columns[column].push(img);
+    });
+  }
 
   return (
     <ImageContainer>
-      <Dialog onClick={() => setShowDialog(!showDialog)} show={showDialog}>
-        Some dialog content
-      </Dialog>
+      <DeletePhotoDialog
+        showDialog={showDialog}
+        toggleDialog={() => setShowDialog(!showDialog)}
+        onSubmit={(v) => {
+          console.log(v);
+          if (v.password === 'Blizzar1') {
+            console.log('accepted password')
+              setShowDialog(false)
+              Axios.delete('')
+          }
+
+        }}
+        onCancel={() => setShowDialog(false)}
+      />
       {columns.map((column, index: number) => (
         <ImageColumn key={index} columns={width}>
           {column.map((image, index: number) => (
-            <Pane key={index} image={image} onClick={() => setShowDialog(true)}/>
+            <Pane
+              key={index}
+              image={image}
+              onClick={() => setShowDialog(true)}
+            />
           ))}
         </ImageColumn>
       ))}
